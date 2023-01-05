@@ -1,40 +1,39 @@
-const elThemeBtn = document.querySelector('#theme-btn');
-const elBody = document.querySelector('body');
-const elHeader = document.querySelector('header');
-const elPopularPost = document.querySelector('.popular-post');
-const swiperWrapper = document.querySelector('.swiper-wrapper');
+import findElement from './utils/findElement.js';
+import renderPosts from './utils/renderPost.js';
 
-const elBtn = document.querySelector('#speech');
+const elThemeBtn = findElement('#theme-btn');
+const elBody = findElement('body');
+const elHeader = findElement('header');
+const elPopularPost = findElement('.popular-post');
+const swiperWrapper = findElement('.swiper-wrapper');
+const selectGenres = findElement('#genres');
+const tvShowPostsElement = findElement('#tv-shows');
+const blockbusterPostsElement = findElement('#blockbuster-posts');
+const netflixOriginalsPostsElement = findElement('#netflix-posts');
+const loader = findElement('.loader');
+const loginBtn = findElement('#login-btn');
+const accountBtn = findElement('#account-btn');
+
+const elBtn = findElement('#speech');
+const token = localStorage.getItem('token');
+
+if (token) {
+	loginBtn.style.display = 'none';
+} else {
+	accountBtn.style.display = 'none';
+}
+
 let popularPosts = [];
 let trendPosts = [];
+let genres = [];
 
-function renderPosts(array, parent = elPopularPost, type) {
-	const fragment = document.createDocumentFragment();
+let tvShowPosts = [];
+let blockbusterPosts = [];
+let netflixOriginalsPosts = [];
 
-	if (type === 'trend') {
-		array.forEach((element) => {
-			const elPost = document.createElement('div');
-			elPost.classList.add('swiper-slide');
-
-			elPost.innerHTML = `
-		<img src=${element.banner} class="slide-img" alt=${element.title} />
-`;
-			fragment.appendChild(elPost);
-		});
-	} else if (type === 'popular') {
-		array.slice(0, 12).forEach((element) => {
-			const elPost = document.createElement('a');
-
-			elPost.href = element.id;
-			elPost.innerHTML = `
-		<img src=${element.banner} alt="" />
-		`;
-			fragment.appendChild(elPost);
-		});
-	}
-
-	parent.appendChild(fragment);
-}
+// if (!token) {
+// 	window.location.href = 'http://127.0.0.1:5500/pages/login.html';
+// }
 
 const getData = async () => {
 	try {
@@ -45,20 +44,80 @@ const getData = async () => {
 			'https://639b2e8331877e43d68513d1.mockapi.io/trend'
 		);
 
+		const allPostsRes = await fetch(
+			'https://639b2e8331877e43d68513d1.mockapi.io/posts'
+		);
+
+		const allPosts = await allPostsRes.json();
 		const trendData = await trendRes.json();
 		const data = await res.json();
+
+		allPosts.forEach((post) => {
+			if (post.genre === 'horse') {
+				tvShowPosts.push(post);
+			} else if (post.genre === 'rabbit') {
+				blockbusterPosts.push(post);
+			} else if (post.genre === 'dog') {
+				netflixOriginalsPosts.push(post);
+			}
+		});
 
 		trendPosts = trendData;
 		popularPosts = data;
 
+		popularPosts.forEach((post) => {
+			if (!genres.includes(post.genre)) {
+				genres.push(post.genre);
+				const newOption = document.createElement('option');
+				newOption.value = post.genre;
+				newOption.textContent = post.genre;
+
+				selectGenres.appendChild(newOption);
+			}
+		});
+
+		renderPosts(tvShowPosts.slice(0, 12), tvShowPostsElement);
+		renderPosts(blockbusterPosts.slice(0, 12), blockbusterPostsElement);
+		renderPosts(
+			netflixOriginalsPosts.slice(0, 6),
+			netflixOriginalsPostsElement
+		);
+
 		renderPosts(popularPosts, elPopularPost, 'popular');
 		renderPosts(trendPosts, swiperWrapper, 'trend');
+
+		loader.style.display = 'none';
 	} catch (error) {
 		console.log(error);
 	}
 };
+
+elPopularPost.addEventListener('click', (e) => {
+	if (e.target.classList.contains('btn-primary')) {
+		const id = e.target.dataset.id;
+
+		localStorage.setItem('id', id);
+		window.location.href = 'http://127.0.0.1:5500/pages/singleFilm.html';
+	}
+});
+
+selectGenres.addEventListener('change', (e) => {
+	const genre = e.target.value;
+
+	if (genre === 'all') {
+		renderPosts(popularPosts, elPopularPost, 'popular');
+	} else {
+		const filteredPosts = popularPosts.filter((post) => {
+			return post.genre === genre;
+		});
+
+		renderPosts(filteredPosts, elPopularPost, 'popular');
+	}
+});
+
 getData();
 
+// slider swiper
 const swiper = new Swiper('.swiper', {
 	// Optional parameters
 	direction: 'horizontal',

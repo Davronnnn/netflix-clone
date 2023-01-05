@@ -4,40 +4,96 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+
 		<link rel="stylesheet" href="../css/login.css" />
 		<title>Document</title>
 	</head>
 	<body>
-		<a class="logo" href="https://www.netflix.com/" target="_blank"
+		
+		<a class="logo" href="../index.html"
 			><img src="https://bit.ly/2VdIFUK"
 		/></a>
-		<div class="login">
-			<h1 class="login__title">Sign In</h1>
+		<form class="login">
+			<h1 class="login__title">Sign Up</h1>
 			<div class="login__group">
 				<input
+					name="email"
 					class="login__group__input"
 					type="text"
-					required="true"
+					required
 				/>
-				<label class="login__group__label">Email or phone number</label>
+				<label class="login__group__label">Email </label>
 			</div>
 			<div class="login__group">
 				<input
+					name="phone"
+					class="login__group__input"
+					type="text"
+					required
+				/>
+				<label class="login__group__label">phone number</label>
+			</div>
+			<div class="login__group">
+				<input
+					name="password"
 					class="login__group__input"
 					type="password"
-					required="true"
+					required
 				/>
 				<label class="login__group__label">Password</label>
 			</div>
-			<button class="login__sign-in" type="button">Sign In</button>
+
+			<p id="error" style="color: red"></p>
+			<button class="login__sign-in" type="submit">Sign Up</button>
 			<div class="login__secondary-cta">
 				<a class="login__secondary-cta__text" href="#">Remember me</a
-				><a
+				><button
+					id="login"
 					class="login__secondary-cta__text login__secondary-cta__text--need-help"
 					href="#"
-					>Need help?</a
 				>
+					Login?
+				</button>
 			</div>
-		</div>
+		</form>
+
+		<form id="login-form" class="login">
+			<h1 class="login__title">Log In</h1>
+			<div class="login__group">
+				<input
+					name="email"
+					class="login__group__input"
+					type="text"
+					required
+				/>
+				<label class="login__group__label">Email </label>
+			</div>
+			<div class="login__group">
+				<input
+					name="password"
+					class="login__group__input"
+					type="password"
+					required
+				/>
+				<label class="login__group__label">Password</label>
+			</div>
+
+			<p id="error" style="color: red"></p>
+			<button class="login__sign-in" type="submit">Login</button>
+			<div class="login__secondary-cta">
+				<a class="login__secondary-cta__text" href="#">Remember me</a
+				><button
+					id="sign-up"
+					class="login__secondary-cta__text login__secondary-cta__text--need-help"
+					href="#"
+				>
+					Sign up?
+				</button>
+			</div>
+		</form>
+
+		
+		<script src="../js/login.js"></script>
 	</body>
 </html>
